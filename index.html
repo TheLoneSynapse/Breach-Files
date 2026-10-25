@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Breach Files — an interactive history of hacking</title>
+<meta name="description" content="An interactive timeline of the most important hacks in computing history: who did it, why, the flaw that let them in, and what was fixed afterwards. Includes AI-era threats, peer-to-peer botnets, a gallery of the hackers, and the history of game cracking.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://commons.wikimedia.org https://upload.wikimedia.org https://thumb.wikimedia.org https://i.ytimg.com; object-src 'none'; base-uri 'none'; form-action 'self'; frame-src https://www.youtube-nocookie.com">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="progress" id="progress"><span></span></div>
+
+<header class="topbar" id="topbar">
+  <a class="brand" href="#top">
+    <span class="brand-mark">&#9760;</span>
+    <span class="brand-text">BREACH<b>FILES</b></span>
+  </a>
+  <nav class="nav" id="nav">
+    <a href="#timeline">Timeline</a>
+    <a href="#ai">AI Threats</a>
+    <a href="#p2p">P2P Threats</a>
+    <a href="#gallery">The Gallery</a>
+    <a href="#games">Game Cracks</a>
+    <a href="#about">About</a>
+  </nav>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">1971 &rarr; today &middot; <span id="entryCount">0</span> documented cases</p>
+        <h1>Every great hack<br>is a story about<br><em>one missed detail.</em></h1>
+        <p class="lede">
+          A seventy-year record of the break-ins that shaped computing: who did it, why they did it,
+          the single flaw that let them in, and what the world changed afterwards. Search it, filter it,
+          or open any case for the full file.
+        </p>
+
+        <div class="searchbar">
+          <span class="search-icon">&#9906;</span>
+          <input id="search" type="search" placeholder="Search: Morris worm, Equifax, Deepfake, Mozi&hellip;" autocomplete="off">
+          <kbd>/</kbd>
+        </div>
+
+        <div class="hero-actions">
+          <button class="btn btn-primary" id="randomBtn">Open a random case</button>
+          <a class="btn btn-ghost" href="#gallery">See the hackers</a>
+        </div>
+      </div>
+
+      <aside class="hero-panel">
+        <div class="panel-head">
+          <span class="dot"></span> system.log
+        </div>
+        <pre class="terminal" id="terminal"></pre>
+        <div class="stat-row">
+          <div class="stat"><b id="statYears">0</b><span>years covered</span></div>
+          <div class="stat"><b id="statPeople">0</b><span>figures profiled</span></div>
+          <div class="stat"><b id="statCats">0</b><span>threat classes</span></div>
+        </div>
+      </aside>
+    </div>
+    <div class="hero-strip" aria-hidden="true">
+      <div class="strip-track">
+        <span>1988 MORRIS WORM</span><span>2000 ILOVEYOU</span><span>2003 SQL SLAMMER</span>
+        <span>2010 STUXNET</span><span>2014 HEARTBLEED</span><span>2017 WANNACRY</span>
+        <span>2020 SOLARWINDS</span><span>2021 LOG4SHELL</span><span>2025 ECHOLEAK</span>
+        <span>1988 MORRIS WORM</span><span>2000 ILOVEYOU</span><span>2003 SQL SLAMMER</span>
+        <span>2010 STUXNET</span><span>2014 HEARTBLEED</span><span>2017 WANNACRY</span>
+        <span>2020 SOLARWINDS</span><span>2021 LOG4SHELL</span><span>2025 ECHOLEAK</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FILTERS -->
+  <section class="filters" id="filters">
+    <div class="filters-inner">
+      <div class="chips" id="chips"></div>
+      <div class="filter-side">
+        <span class="result-count" id="resultCount"></span>
+        <button class="mini-btn" id="sortBtn" data-mode="asc">Oldest &#8593; newest</button>
+        <button class="mini-btn" id="clearBtn">Clear</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section class="section" id="timeline">
+    <div class="section-head">
+      <p class="eyebrow">01 &mdash; the master timeline</p>
+      <h2>Seventy years of breaking in</h2>
+      <p class="section-lede">
+        Every entry answers the same four questions: <b>who</b>, <b>why</b>, <b>what was the flaw</b>,
+        and <b>what was fixed</b>. Click any card to open the full file.
+      </p>
+    </div>
+    <div class="timeline" id="timelineList"></div>
+    <div class="empty" id="emptyState" hidden>
+      <p>&#9888; No cases match that filter.</p>
+      <button class="btn btn-ghost" id="emptyReset">Reset filters</button>
+    </div>
+  </section>
+
+  <!-- AI THREATS -->
+  <section class="section section-alt" id="ai">
+    <div class="section-head">
+      <p class="eyebrow">02 &mdash; the machine age</p>
+      <h2>What AI broke, and what AI found</h2>
+      <p class="section-lede">
+        Two very different stories sit in the same decade. On one side, putting a language model into
+        production created a brand-new attack surface: prompts that obey someone else, tools that act,
+        and packages that never existed. On the other, machines started finding bugs in code nobody
+        had time to read. Both halves are in the timeline above &mdash; filter by
+        <b>AI-Era Threats</b> to isolate them.
+      </p>
+      <div class="two-col">
+        <div class="callout callout-red">
+          <h4>The attack surface AI added</h4>
+          <ul>
+            <li><b>Prompt injection</b> &mdash; instructions hidden in an email, a page or a file that the model obeys instead of you. EchoLeak (CVE-2025-32711) did it with zero clicks at CVSS 9.3.</li>
+            <li><b>Excessive agency</b> &mdash; an agent with file and tool access can be talked into changing its own safety settings. CVE-2025-53773 did exactly that in a coding assistant.</li>
+            <li><b>Tool and supply-chain poisoning</b> &mdash; MCP tool descriptions are read by the model but not by you. Real CVEs landed in MCP Inspector and mcp-remote in 2025.</li>
+            <li><b>Hallucinated dependencies</b> &mdash; models invent package names; attackers register them. Measured at 5.2% (commercial) and 21.7% (open source) of generated code.</li>
+            <li><b>Deepfake identity defeat</b> &mdash; a video call where every participant was fake moved HK$200 million. No software was broken at all.</li>
+          </ul>
+        </div>
+        <div class="callout callout-green">
+          <h4>The bugs AI found</h4>
+          <ul>
+            <li><b>Big Sleep, Nov 2024</b> &mdash; first public example of an AI agent finding an exploitable memory-safety bug in SQLite before release. Maintainers fixed it the same day.</li>
+            <li><b>CVE-2025-6965</b> &mdash; a SQLite flaw Google says was already known to attackers, found with Big Sleep and fixed before exploitation.</li>
+            <li><b>DARPA AIxCC, Aug 2025</b> &mdash; finalist systems found 54 of 63 synthetic vulnerabilities, patched 43, and turned up 18 real ones. Team Atlanta took the $4M prize.</li>
+            <li><b>Project Glasswing, 2026</b> &mdash; reported 10,000+ high or critical findings across partners; 90.6% of an independently reviewed open-source subset checked out.</li>
+            <li><b>The counterweight</b> &mdash; ZeroDayBench found frontier agents still could not autonomously solve 22 novel critical vulnerabilities. Discovery scaled first; autonomy did not.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="rulebar">
+        <span>The pattern across all of it:</span> a model reads whatever you feed it &mdash; email, docs, tool
+        descriptions, web pages &mdash; and whatever an attacker can write to, they control.
+      </div>
+    </div>
+    <div class="mini-grid" id="aiGrid"></div>
+  </section>
+
+  <!-- P2P THREATS -->
+  <section class="section" id="p2p">
+    <div class="section-head">
+      <p class="eyebrow">03 &mdash; no server to seize</p>
+      <h2>Peer-to-peer threats</h2>
+      <p class="section-lede">
+        The oldest defence against a botnet is to find the server and take it away. Peer-to-peer botnets
+        remove that option: every infected machine is also part of the command network. That makes them
+        harder to kill &mdash; not impossible, just more expensive. Filter the timeline by
+        <b>P2P &amp; Botnets</b> for the full set.
+      </p>
+      <div class="three-col">
+        <div class="factbox">
+          <h4>Why P2P is hard to kill</h4>
+          <p>No central server means no domain seizure and no single sinkhole. Operators rebuild from
+          surviving peers automatically. Researchers instead exploit weaknesses in the peer-discovery
+          protocol itself, or wait for someone with legal authority to redirect the traffic.</p>
+        </div>
+        <div class="factbox">
+          <h4>Why it still falls</h4>
+          <p>Operation Tovar (2014) took down Gameover Zeus by seizing domains <i>and</i> disrupting the
+          protocol in court-authorised actions. Sality, running since 2003, was sinkholed in August 2026.
+          People are a bigger vulnerability than protocols.</p>
+        </div>
+        <div class="factbox">
+          <h4>The real distribution channel</h4>
+          <p>Cracked games and keygens remain one of the most reliable malware delivery paths in
+          existence: the file is executable, unsigned, and the person running it will not report it.
+          This site documents that history &mdash; it does not host or link to cracks.</p>
+        </div>
+      </div>
+    </div>
+    <div class="mini-grid" id="p2pGrid"></div>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="section section-alt" id="gallery">
+    <div class="section-head">
+      <p class="eyebrow">04 &mdash; the gallery</p>
+      <h2>The people behind the packets</h2>
+      <p class="section-lede">
+        Thirty-five profiles across fifty years, from the telephone phreakers of the 1970s to
+        today’s indicted cybercrime bosses: the white hats who defend, the black hats who were
+        charged or convicted, and the grey hats who sat somewhere in between. Portraits come from
+        Wikimedia Commons and are credited with their licence on every card; where no free-licensed
+        photo exists, the card says so rather than inventing a face. Click any card for the full
+        profile and their notable works.
+      </p>
+    </div>
+
+    <div class="gallery-bar">
+      <div class="hat-chips" id="hatChips"></div>
+      <span class="result-count" id="peopleCount"></span>
+    </div>
+
+    <div class="people-grid" id="peopleGrid"></div>
+  </section>
+
+  <!-- GAMES / CRACKS -->
+  <section class="section" id="games">
+    <div class="section-head">
+      <p class="eyebrow">05 &mdash; the cracking scene</p>
+      <h2>Games, cracks and the arms race</h2>
+      <p class="section-lede">
+        Copy protection has been fought over since cassette tapes could be duplicated with a second
+        recorder. This is that history: the groups, the court cases, and the years the protection
+        hurt legitimate players more than it ever hurt pirates.
+      </p>
+      <div class="notice">
+        <b>Scope note.</b> This section is history. No cracks, keygens, serials or pirated software are
+        hosted or linked here, and none will be. Discussing how the scene worked is not the same as
+        distributing what it produced.
+      </div>
+    </div>
+
+    <div class="milestones" id="milestones"></div>
+
+    <div class="glossary-wrap">
+      <div class="section-head sub">
+        <p class="eyebrow">vocabulary</p>
+        <h3>Scene words, defined</h3>
+        <p class="section-lede">Most confusion in this area comes from treating these as synonyms. They are not.</p>
+      </div>
+      <div class="glossary" id="glossary"></div>
+    </div>
+
+    <div class="lessons">
+      <div class="lesson">
+        <span class="lesson-n">01</span>
+        <h4>Protection raises the cost; it does not remove the risk</h4>
+        <p>Every scheme from Sector rotators to Denuvo delayed copying. None stopped it. What Denuvo
+        changed was the economics: it bought the launch window, which is where the money is.</p>
+      </div>
+      <div class="lesson">
+        <span class="lesson-n">02</span>
+        <h4>DRM creates single points of failure</h4>
+        <p>Always-on checks, activation limits and remote servers mean a paid-for game stops working
+        when something outside your control breaks. Spore&rsquo;s three activations and The Settlers 7
+        are the canonical examples.</p>
+      </div>
+      <div class="lesson">
+        <span class="lesson-n">03</span>
+        <h4>Protection is not the same as security</h4>
+        <p>StarForce and SecuROM shipped kernel drivers to stop copying. Drivers are attack surface.
+        Copy protection and system security pull in opposite directions, and one usually wins.</p>
+      </div>
+      <div class="lesson">
+        <span class="lesson-n">04</span>
+        <h4>The scene is a talent pipeline, not just a threat</h4>
+        <p>Wozniak built blue boxes with Captain Crunch. The demoscene fed the games industry and
+        security research for decades. Attitudes and enforcement both have to account for that.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="section section-alt" id="about">
+    <div class="section-head">
+      <p class="eyebrow">06 &mdash; method</p>
+      <h2>How this was built</h2>
+      <p class="section-lede">
+        Every entry is sourced from public reporting, CVE records, court documents, vendor advisories
+        and the original research papers, and each card links out to what it was based on. Where
+        sources disagree or a widely repeated figure is actually an estimate, the card says so
+        instead of repeating it confidently.
+      </p>
+      <div class="two-col">
+        <div class="callout callout-neutral">
+          <h4>Deliberately not included</h4>
+          <ul>
+            <li>Cracks, keygens, serials, piracy links or working circumvention steps</li>
+            <li>Exploit code, payloads or step-by-step attack instructions</li>
+            <li>Unverified attributions presented as fact &mdash; contested cases are marked contested</li>
+            <li>Stock photos standing in for people whose portraits are not freely licensed</li>
+          </ul>
+        </div>
+        <div class="callout callout-neutral">
+          <h4>Portraits and licences</h4>
+          <p>Images come from Wikimedia Commons and are credited on each card with their licence,
+          each linking back to the file page. They are used under CC BY, CC BY-SA or public domain
+          terms as marked. If you hold rights to an image and want it removed, say so and it will go.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <span class="brand-mark">&#9760;</span>
+      <p><b>BREACHFILES</b></p>
+      <p class="muted">An educational record of how systems were broken and what was rebuilt afterwards.</p>
+    </div>
+    <div>
+      <p class="foot-h">Sections</p>
+      <a href="#timeline">Timeline</a>
+      <a href="#ai">AI threats</a>
+      <a href="#p2p">P2P threats</a>
+      <a href="#gallery">The gallery</a>
+      <a href="#games">Game cracks</a>
+    </div>
+    <div>
+      <p class="foot-h">Primary sources</p>
+      <a href="https://www.cisa.gov/news-events/alerts" target="_blank" rel="noopener">CISA alerts</a>
+      <a href="https://nvd.nist.gov/" target="_blank" rel="noopener">NIST NVD</a>
+      <a href="https://projectzero.google/" target="_blank" rel="noopener">Google Project Zero</a>
+      <a href="https://www.justice.gov/criminal-ccips" target="_blank" rel="noopener">US DOJ cybercrime</a>
+      <a href="https://commons.wikimedia.org/" target="_blank" rel="noopener">Wikimedia Commons</a>
+    </div>
+    <div>
+      <p class="foot-h">Warning</p>
+      <p class="muted">Educational and historical use only. Nothing here is an instruction manual.
+      Do not break into systems you do not own or have written permission to test.</p>
+    </div>
+  </div>
+  <p class="foot-bottom">Built as a research and teaching artefact &middot; All source links go to their original publishers.</p>
+</footer>
+
+<!-- INCIDENT MODAL -->
+<div class="modal" id="modal" hidden>
+  <div class="modal-back" data-close></div>
+  <article class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-x" data-close aria-label="Close">&times;</button>
+    <div class="modal-body" id="modalBody"></div>
+  </article>
+</div>
+
+<!-- PERSON MODAL -->
+<div class="modal" id="personModal" hidden>
+  <div class="modal-back" data-close-person></div>
+  <article class="modal-card modal-person" role="dialog" aria-modal="true" aria-labelledby="personTitle">
+    <button class="modal-x" data-close-person aria-label="Close">&times;</button>
+    <div class="modal-body" id="personBody"></div>
+  </article>
+</div>
+
+<script src="data.js"></script>
+<script src="data-modern.js"></script>
+<script src="people.js"></script>
+<script src="people-extra.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
